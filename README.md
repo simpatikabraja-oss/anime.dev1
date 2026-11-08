@@ -1,4 +1,4 @@
-# ⚔️ Alfari Design — Akaza Website V2
+# ⚔️ Braja Design — Akaza Website V2
 
 <p align="center">
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5">
@@ -15,7 +15,7 @@
   <i>Dibuat dengan kreativitas, animasi, dan kecintaan terhadap dunia anime.</i>
 </p>
 
-> ⚠️ Proyek ini merupakan proyek penggemar dan portofolio pribadi. Tidak berafiliasi dengan atau didukung secara resmi oleh pemegang hak *Demon Slayer: Kimetsu no Yaiba*.
+> ⚠️ Proyek ini merupakan proyek penggemar dan portofolio pribadi. Tidak berafiliasi dengan atau didukung secara resmi oleh pemegang hak _Demon Slayer: Kimetsu no Yaiba_.
 
 ---
 
@@ -30,14 +30,14 @@
 
 ## 🧰 Teknologi
 
-| Teknologi | Kegunaan |
-|---|---|
-| HTML5 | Struktur dan konten halaman |
-| CSS3 | Tampilan visual, layout, dan responsivitas |
-| JavaScript | Interaksi dan animasi website |
-| [GSAP 3](https://gsap.com/) | Membuat animasi yang dinamis |
+| Teknologi                                                        | Kegunaan                                   |
+| ---------------------------------------------------------------- | ------------------------------------------ |
+| HTML5                                                            | Struktur dan konten halaman                |
+| CSS3                                                             | Tampilan visual, layout, dan responsivitas |
+| JavaScript                                                       | Interaksi dan animasi website              |
+| [GSAP 3](https://gsap.com/)                                      | Membuat animasi yang dinamis               |
 | [ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/) | Mengatur animasi berdasarkan posisi scroll |
-| [Google Fonts](https://fonts.google.com/) | Tipografi website |
+| [Google Fonts](https://fonts.google.com/)                        | Tipografi website                          |
 
 ## 🚀 Cara Menjalankannya
 
@@ -46,13 +46,13 @@ Proyek ini menggunakan HTML, CSS, dan JavaScript biasa sehingga tidak memerlukan
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/gyzeennnpro-sudo/akazawebv2.git
+git clone https://github.com/simpatikabraja-oss/anime.dev1.git
 ```
 
 ### 2. Masuk ke Folder Proyek
 
 ```bash
-cd akazawebv2
+cd anime.dev1
 ```
 
 ### 3. Jalankan Website
@@ -70,6 +70,8 @@ npx serve .
 Kemudian buka alamat lokal yang ditampilkan di terminal.
 
 > 💡 **Catatan:** Koneksi internet diperlukan untuk memuat GSAP dari CDN dan Google Fonts jika digunakan oleh website.
+>
+> File gambar dan video di folder `img/` disimpan secara lokal dan tidak disertakan di repository.
 
 ## 📁 Struktur Proyek
 
@@ -85,10 +87,10 @@ AkazaWebsiteV2/
 ## 🌐 Temukan Saya
 
 <p align="center">
-  <a href="https://www.tiktok.com/@mie_ayamm__3">
+  <a href="https://www.tiktok.com/@brajasimpatika?_r=1&_t=ZS-9BEsYVXe1yP">
     <img src="https://img.shields.io/badge/TikTok-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok">
   </a>
-  <a href="https://www.instagram.com/alfariyusuff_/">
+  <a href="https://www.instagram.com/brajasimpatika?cplk=ZDI1bWtpemYwNHhp">
     <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram">
   </a>
 </p>
@@ -100,7 +102,7 @@ AkazaWebsiteV2/
 ## ⚠️ Hak Cipta dan Penggunaan Aset
 
 - **Kode sumber asli** yang dibuat untuk proyek ini dilisensikan berdasarkan MIT, sesuai ketentuan dalam file `LICENSE`.
-- Karakter, nama, logo, gambar, ilustrasi, musik, dan video *Demon Slayer* tetap menjadi hak pemilik atau pemegang hak masing-masing dan tidak tercakup dalam lisensi MIT.
+- Karakter, nama, logo, gambar, ilustrasi, musik, dan video _Demon Slayer_ tetap menjadi hak pemilik atau pemegang hak masing-masing dan tidak tercakup dalam lisensi MIT.
 - Proyek ini merupakan karya penggemar tidak resmi. Pencantuman kredit tidak otomatis memberikan izin penggunaan aset pihak ketiga.
 - Pastikan kamu memiliki izin atau dasar penggunaan yang sesuai sebelum menggunakan kembali atau mendistribusikan aset pihak ketiga.
 
@@ -113,9 +115,9 @@ Lihat file [LICENSE](./LICENSE) untuk ketentuan selengkapnya.
 ---
 
 <p align="center">
-  <b>⚔️ ALFARI DESIGN ⚔️</b>
+  <b>⚔️ BRAJA DESIGN ⚔️</b>
   <br>
   Dibuat dengan kreativitas. Terinspirasi oleh anime Demon Slayer. Dikembangkan dengan kode.
   <br><br>
-  © 2026 Alfari Design
+  © 2026 Braja Design
 </p>

@@ -1,3 +1,34 @@
+function hideUnavailableMedia(media) {
+  media.hidden = true;
+  const parent = media.parentElement;
+  if (parent?.matches(".runing-up, .runing-down")) {
+    if ([...parent.querySelectorAll("img")].every(image => image.hidden)) {
+      parent.hidden = true;
+    }
+    return;
+  }
+  parent?.classList.add("media-fallback");
+}
+
+document.querySelectorAll("img").forEach(img => {
+  img.addEventListener("error", () => hideUnavailableMedia(img), { once: true });
+  if (img.complete && img.naturalWidth === 0) hideUnavailableMedia(img);
+});
+
+document.querySelectorAll("video").forEach(video => {
+  video.addEventListener("error", () => { video.hidden = true; }, { once: true });
+  video.addEventListener("loadeddata", () => video.classList.add("is-ready"), { once: true });
+  if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+    video.hidden = true;
+  }
+  window.setTimeout(() => {
+    if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) video.hidden = true;
+  }, 2000);
+});
+
+if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") {
+  document.querySelector(".loader")?.remove();
+} else {
 gsap.registerPlugin(ScrollTrigger);
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -24,7 +55,7 @@ function heroIntro() {
 
 const counter = { v: 0 };
 const countEl = document.getElementById("count");
-gsap.timeline({ onComplete: () => document.querySelector(".loader").remove() })
+gsap.timeline({ onComplete: () => document.querySelector(".loader")?.remove() })
   .to(counter, {
     v: 100, duration: reduce ? 0.3 : 1.8, ease: "power2.inOut",
     onUpdate: () => countEl.textContent = Math.round(counter.v)
@@ -34,50 +65,6 @@ gsap.timeline({ onComplete: () => document.querySelector(".loader").remove() })
   .call(heroIntro, null, "-=0.5");
 
 if (!reduce) {
-
-  /* Kursor komet: kepala terang + ekor api + percikan */
-  if (matchMedia("(hover:hover) and (pointer:fine)").matches) {
-    const cv = document.querySelector(".comet"), ctx = cv.getContext("2d");
-    const dpr = Math.min(devicePixelRatio || 1, 2);
-    let W, H;
-    const U = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--u")) || 1;
-    const resize = () => { W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
-    resize(); addEventListener("resize", resize);
-    const mouse = { x: 0, y: 0 }, head = { x: 0, y: 0, r: 20 * U }, trail = [], sparks = [];
-    let seen = false, targetR = 20 * U;
-    addEventListener("mousemove", e => {
-      mouse.x = e.clientX; mouse.y = e.clientY;
-      if (!seen) { head.x = mouse.x; head.y = mouse.y; seen = true; document.documentElement.classList.add("has-comet"); }
-      targetR = e.target.closest("a, button, .c-inner") ? 34 * U : 20 * U;
-    });
-    gsap.ticker.add(() => {
-      ctx.clearRect(0, 0, W, H);
-      if (!seen) return;
-      const dx = mouse.x - head.x, dy = mouse.y - head.y;
-      head.x += dx * 0.34; head.y += dy * 0.34; head.r += (targetR - head.r) * 0.15;
-      trail.push({ x: head.x, y: head.y });
-      if (trail.length > 30) trail.shift();
-      if (Math.hypot(dx, dy) > 3 && Math.random() < 0.7)
-        sparks.push({ x: head.x, y: head.y, vx: (Math.random() - 0.5) * 1.6, vy: (Math.random() - 0.5) * 1.6, life: 1 });
-      ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round";
-      for (let i = 1; i < trail.length; i++) {
-        const t = i / trail.length;
-        ctx.strokeStyle = `rgba(255,${Math.round(60 + 160 * t)},${Math.round(20 + 70 * t * t)},${t * 0.85})`;
-        ctx.lineWidth = (1 + t * 9) * U;
-        ctx.beginPath(); ctx.moveTo(trail[i - 1].x, trail[i - 1].y); ctx.lineTo(trail[i].x, trail[i].y); ctx.stroke();
-      }
-      const g = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, head.r);
-      g.addColorStop(0, "rgba(255,250,230,1)"); g.addColorStop(0.3, "rgba(255,180,70,.85)"); g.addColorStop(1, "rgba(255,80,20,0)");
-      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(head.x, head.y, head.r, 0, 7); ctx.fill();
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i]; s.x += s.vx; s.y += s.vy + 0.2; s.life -= 0.03;
-        if (s.life <= 0) { sparks.splice(i, 1); continue; }
-        ctx.fillStyle = `rgba(255,${Math.round(120 + 100 * s.life)},50,${s.life})`;
-        ctx.beginPath(); ctx.arc(s.x, s.y, (1 + s.life * 1.8) * U, 0, 7); ctx.fill();
-      }
-    });
-  }
-
   /* Progress bar scroll */
   gsap.to(".progress", {
     scaleX: 1, ease: "none",
@@ -116,6 +103,7 @@ if (!reduce) {
   /* Galeri berjalan tanpa putus (gandakan isi lalu geser setengahnya) */
   function marquee(sel, dir) {
     const row = document.querySelector(sel);
+    if (row.hidden || !row.children.length) return;
     row.innerHTML += row.innerHTML;
     row.innerHTML += row.innerHTML;
     const half = row.scrollWidth / 2;
@@ -126,10 +114,6 @@ if (!reduce) {
   window.addEventListener("load", () => {
     marquee(".runing-up", 1);
     marquee(".runing-down", -1);
-    gsap.from(".img-runing img", {
-      y: 60, opacity: 0, duration: 0.8, stagger: 0.05, ease: "power2.out",
-      scrollTrigger: { trigger: ".img-runing", start: "top 95%", toggleActions: "play reverse play reverse" }
-    });
   });
 
   /* Duel: scroll horizontal dengan pin */
@@ -214,8 +198,10 @@ if (!reduce) {
       clipPath: "inset(0 0% 0 0)", duration: 1.2, ease: "power4.out",
       scrollTrigger: { trigger: f, start: "top 85%", toggleActions: "play none none reverse" }
     });
-    gsap.fromTo(img, { scale: 1.35 }, { scale: 1, ease: "none",
-      scrollTrigger: { trigger: f, start: "top bottom", end: "bottom 40%", scrub: true } });
+    if (img) {
+      gsap.fromTo(img, { scale: 1.35 }, { scale: 1, ease: "none",
+        scrollTrigger: { trigger: f, start: "top bottom", end: "bottom 40%", scrub: true } });
+    }
   });
 
 
@@ -272,3 +258,4 @@ document.querySelectorAll(".nav a").forEach(a => {
 document.getElementById("btnTop").addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
+}

@@ -416,7 +416,8 @@ img {
   .tanjiro-content h2 {
     font-size: calc(40 * var(--u));
   }
-  .img-runing img {
+  .img-runing img,
+  .img-runing .gallery-fallback {
     width: calc(80 * var(--u));
     height: calc(100 * var(--u));
   }
@@ -450,12 +451,6 @@ img {
 }
 
 /* ===== REVISI ===== */
-.title span,
-.sub,
-.scroll-hint {
-  opacity: 0;
-}
-
 .split .w {
   display: inline-block;
   white-space: nowrap;
@@ -929,6 +924,93 @@ img {
   }
 }
 
+/* Media fallback and compact-screen navigation */
+.akaza-bg {
+  background:
+    linear-gradient(to top, rgba(7, 7, 12, 0.85), rgba(7, 7, 12, 0) 65%),
+    url("img/akaza6.jpeg") center 35% / cover no-repeat,
+    #170e22;
+}
+.tanjiro-bg {
+  background:
+    radial-gradient(ellipse at 82% 65%, rgba(255, 104, 35, 0.62), transparent 42%),
+    radial-gradient(ellipse at 54% 78%, rgba(191, 35, 60, 0.36), transparent 48%),
+    radial-gradient(ellipse at 20% 38%, rgba(48, 114, 201, 0.42), transparent 52%),
+    linear-gradient(135deg, #100e1b, #26121a 55%, #09090f);
+}
+.shinobu-bg {
+  background:
+    linear-gradient(to top, rgba(7, 7, 12, 0.85), rgba(7, 7, 12, 0.12) 65%),
+    url("img/shinobu1.jpg") center 35% / cover no-repeat,
+    linear-gradient(135deg, #24152f, #4a2142 55%, #11101a);
+}
+.parallax-video {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.parallax-video.is-ready {
+  opacity: 1;
+}
+.media-fallback {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 70% 25%, rgba(255, 138, 43, 0.38), transparent 55%),
+    linear-gradient(145deg, #241a2c, #11111a 70%);
+}
+.media-fallback::before {
+  content: attr(data-media-alt);
+  position: absolute;
+  inset: 12%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: clamp(12px, 2vw, 20px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.img-runing .gallery-fallback {
+  display: flex;
+  width: calc(120 * var(--u));
+  height: calc(150 * var(--u));
+  flex: 0 0 auto;
+  align-items: flex-end;
+  padding: calc(10 * var(--u));
+  overflow: hidden;
+  border-radius: calc(6 * var(--u));
+  color: #fff3e8;
+  font-size: calc(10 * var(--u));
+  font-weight: 700;
+  background:
+    radial-gradient(ellipse at 70% 22%, rgba(255, 164, 64, 0.62), transparent 44%),
+    linear-gradient(155deg, #6c2724, #17101e 68%);
+}
+.card .c-img,
+.tl-item figure {
+  background:
+    radial-gradient(ellipse at 70% 25%, rgba(255, 138, 43, 0.38), transparent 55%),
+    linear-gradient(145deg, #241a2c, #11111a 70%);
+}
+
+@media (max-width: 700px) {
+  .nav {
+    width: calc(100vw - 24px);
+    max-width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav a {
+    flex: 0 0 auto;
+  }
+}
+
 /* ===== REVISI 7 ===== */
 /* Card Tanjiro terbaca jelas */
 .tanjiro-content {
@@ -1109,19 +1191,6 @@ img {
 }
 
 /* ===== REVISI 8 ===== */
-.comet {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 90;
-  pointer-events: none;
-}
-html.has-comet,
-html.has-comet * {
-  cursor: none !important;
-}
-
 .card {
   width: min(94vw, calc(1180 * var(--u)));
   padding: 0 3vw;
