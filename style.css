@@ -986,7 +986,9 @@ img {
     radial-gradient(ellipse at 82% 65%, rgba(255, 104, 35, 0.62), transparent 42%),
     radial-gradient(ellipse at 54% 78%, rgba(191, 35, 60, 0.36), transparent 48%),
     radial-gradient(ellipse at 20% 38%, rgba(48, 114, 201, 0.42), transparent 52%),
-    linear-gradient(135deg, #100e1b, #26121a 55%, #09090f);
+    linear-gradient(135deg, rgba(16, 14, 27, 0.25), rgba(38, 18, 26, 0.2) 55%, rgba(9, 9, 15, 0.45)),
+    url("img/tanjiro3.webp") center 30% / cover no-repeat;
+  background-color: #09090f;
 }
 .shinobu-bg {
   background:
