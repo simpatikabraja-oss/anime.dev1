@@ -17,10 +17,12 @@ document.querySelectorAll("img").forEach(img => {
 
 const videos = [...document.querySelectorAll("video")];
 function loadVideo(video) {
-  const source = video.querySelector("source[data-src]");
-  if (!source) return;
-  source.src = source.dataset.src;
-  source.removeAttribute("data-src");
+  const sources = [...video.querySelectorAll("source[data-src]")];
+  if (!sources.length) return;
+  sources.forEach(source => {
+    source.src = source.dataset.src;
+    source.removeAttribute("data-src");
+  });
   video.load();
 }
 
@@ -199,7 +201,7 @@ if (!reduce) {
     marquee(".runing-down", -1);
   });
 
-  /* Duel: horizontal di desktop, stacked di layar kecil */
+  /* Duel: horizontal hanya untuk desktop dengan pointer presisi */
   const duelMedia = gsap.matchMedia();
   function animateDuelCards(containerAnimation) {
     document.querySelectorAll(".card").forEach(card => {
@@ -230,7 +232,7 @@ if (!reduce) {
     });
   }
 
-  duelMedia.add("(min-width: 701px)", () => {
+  duelMedia.add("(min-width: 701px) and (hover: hover) and (pointer: fine)", () => {
     const track = document.querySelector(".duel-track");
     const indicator = document.querySelector(".duel-progress");
     const fill = document.querySelector(".duel-progress-fill");
@@ -254,7 +256,7 @@ if (!reduce) {
     animateDuelCards(hScroll);
   });
 
-  duelMedia.add("(max-width: 700px)", () => {
+  duelMedia.add("(max-width: 700px), (hover: none), (pointer: coarse)", () => {
     document.querySelector(".duel-hint").textContent = "Scroll untuk melihat kartu satu per satu.";
     gsap.from(".panel.intro > *", {
       y: 36, opacity: 0, stagger: 0.12, duration: 0.8, ease: "power3.out",
@@ -293,9 +295,9 @@ if (!reduce) {
   /* Kutipan: kata menyala mengikuti scroll */
   const q = document.getElementById("quoteText");
   q.innerHTML = q.textContent.split(" ").map(w => `<span class="qw">${w}</span>`).join("");
-  gsap.fromTo(".qw", { opacity: 0.12 }, {
-    opacity: 1, stagger: 0.1, ease: "none",
-    scrollTrigger: { trigger: ".quote", start: "top 65%", end: "bottom 60%", scrub: true }
+  gsap.fromTo(".qw", { opacity: 0.4 }, {
+    opacity: 1, stagger: 0.06, ease: "none",
+    scrollTrigger: { trigger: ".quote", start: "top 85%", end: "bottom 20%", scrub: 0.5 }
   });
 
   /* Timeline: garis tergambar, item masuk dari kanan */
