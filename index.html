@@ -3,12 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Braja Design</title>
+<meta name="description" content="Jelajahi kisah Akaza, Tanjiro, Shinobu, dan Giyu dalam pengalaman fan-made Kimetsu no Yaiba yang sinematik dan interaktif.">
+<meta name="theme-color" content="#07070c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Braja Design — Kimetsu no Yaiba">
+<meta property="og:description" content="Pengalaman fan-made sinematik bersama Akaza, Tanjiro, Shinobu, dan Giyu.">
+<meta property="og:image" content="img/akaza6.jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Braja Design — Kimetsu no Yaiba">
+<meta name="twitter:description" content="Pengalaman fan-made sinematik bersama Akaza, Tanjiro, Shinobu, dan Giyu.">
+<meta name="twitter:image" content="img/akaza6.jpeg">
+<title>Braja Design — Kimetsu no Yaiba</title>
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Shippori+Mincho+B1:wght@700;800&family=Lora:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 </head>
 <body>
 
+<div class="cursor-glow" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><span class="cursor-ring"></span><span class="cursor-label"></span></div>
 <div class="loader">
   <div class="loader-num"><span id="count">0</span>%</div>
   <div class="loader-bar"><i></i></div>
@@ -26,8 +38,8 @@
 
 <!-- HERO AKAZA -->
 <section class="akaza-bg" id="akaza">
-  <video autoplay loop muted playsinline disablepictureinpicture poster="img/akaza6.jpeg" class="parallax-video">
-    <source src="img/akaza.mp4" type="video/mp4">
+  <video autoplay loop muted playsinline disablepictureinpicture preload="none" poster="img/akaza6.jpeg" class="parallax-video">
+    <source data-src="img/akaza.mp4" type="video/mp4">
   </video>
   <div class="shade"></div>
   <div class="akaza-content">
@@ -41,8 +53,8 @@
 
 <!-- TANJIRO -->
 <section class="tanjiro-bg" id="tanjiro">
-  <video autoplay loop muted playsinline disablepictureinpicture poster="img/tanjiro3.jpeg" class="parallax-video">
-    <source src="img/tanjiro333.mp4" type="video/mp4">
+  <video autoplay loop muted playsinline disablepictureinpicture preload="none" poster="img/tanjiro3.jpeg" class="parallax-video">
+    <source data-src="img/tanjiro333.mp4" type="video/mp4">
   </video>
   <div class="shade"></div>
 
@@ -53,16 +65,16 @@
 
   <div class="img-runing">
     <div class="runing-up">
-      <img src="img/Akaza3.jpeg" alt="Akaza"><img src="img/akaza2.jpeg" alt="Akaza"><img src="img/Akaza1.jpeg" alt="Akaza"><img src="img/akaza4.jpeg" alt="Akaza"><img src="img/akaza5.jpeg" alt="Akaza"><img src="img/akaza6.jpeg" alt="Akaza"><img src="img/akaza7.jpeg" alt="Akaza">
+      <img src="img/Akaza3.jpeg" alt="Akaza" loading="lazy"><img src="img/akaza2.jpeg" alt="Akaza" loading="lazy"><img src="img/Akaza1.jpeg" alt="Akaza" loading="lazy"><img src="img/akaza4.jpeg" alt="Akaza" loading="lazy"><img src="img/akaza5.jpeg" alt="Akaza" loading="lazy"><img src="img/akaza6.jpeg" alt="Akaza" loading="lazy"><img src="img/akaza7.jpeg" alt="Akaza" loading="lazy">
     </div>
     <div class="runing-down">
-      <img src="img/tanjiro1.jpeg" alt="Tanjiro menggunakan Napas Air">
-      <img src="img/tanjiro5.jpeg" alt="Tanjiro dalam pertarungan">
-      <img src="img/tanjiro3.jpeg" alt="Tanjiro menggunakan Hinokami Kagura">
-      <img src="img/tanjiro7.jpeg" alt="Tanjiro dengan tekad menyala">
-      <img src="img/tanjiro4.jpeg" alt="Tanjiro bertarung">
-      <img src="img/tanjiro6.jpeg" alt="Tanjiro dalam pose siaga">
-      <img src="img/tanjiro2.jpeg" alt="Tanjiro dengan Napas Air">
+      <img src="img/tanjiro1.jpeg" alt="Tanjiro menggunakan Napas Air" loading="lazy">
+      <img src="img/tanjiro5.jpeg" alt="Tanjiro dalam pertarungan" loading="lazy">
+      <img src="img/tanjiro3.jpeg" alt="Tanjiro menggunakan Hinokami Kagura" loading="lazy">
+      <img src="img/tanjiro7.jpeg" alt="Tanjiro dengan tekad menyala" loading="lazy">
+      <img src="img/tanjiro4.jpeg" alt="Tanjiro bertarung" loading="lazy">
+      <img src="img/tanjiro6.jpeg" alt="Tanjiro dalam pose siaga" loading="lazy">
+      <img src="img/tanjiro2.jpeg" alt="Tanjiro dengan Napas Air" loading="lazy">
     </div>
   </div>
 </section>
@@ -75,11 +87,11 @@
 </div>
 
 <!-- DUEL: horizontal scroll -->
-<section class="duel" id="duel">
+<section class="duel" id="duel" aria-label="Duel Akaza dan Tanjiro">
   <div class="duel-track">
     <div class="panel intro">
       <h2 class="split">Dua jalan, satu pertarungan</h2>
-      <p>Geser terus ke bawah. Halaman akan berjalan ke samping.</p>
+      <p class="duel-hint">Geser ke bawah untuk menjelajah panel.</p>
     </div>
 
     <div class="panel card akaza-card">
@@ -134,6 +146,10 @@
       </div>
     </div>
   </div>
+  <div class="duel-progress" role="progressbar" aria-label="Progres panel duel" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-valuetext="Panel 1 dari 5">
+    <span class="duel-progress-fill"></span>
+    <ol class="duel-dots" aria-hidden="true"><li class="is-current"></li><li></li><li></li><li></li><li></li></ol>
+  </div>
 </section>
 
 <!-- KUTIPAN -->
@@ -174,6 +190,12 @@
   <div class="shinobu-content">
     <p class="char-eyebrow">Insect Hashira</p>
     <h2 class="title2" aria-label="SHINOBU"><span>S</span><span>H</span><span>I</span><span>N</span><span>O</span><span>B</span><span>U</span></h2>
+    <p class="shinobu-bio">Dengan senyum tenang dan gerakan secepat kilat, Shinobu memakai racun wisteria dan tusukan presisi untuk mengalahkan iblis—meski ia tak memiliki kekuatan fisik untuk memenggal mereka.</p>
+    <div class="shinobu-stats" aria-label="Fakta tentang Shinobu">
+      <div class="shinobu-stat"><span>Pangkat</span><strong>Hashira Serangga</strong></div>
+      <div class="shinobu-stat"><span>Gaya bertarung</span><strong>Napas Serangga</strong></div>
+      <div class="shinobu-stat"><span>Senjata</span><strong>Katana berujung suntik</strong></div>
+    </div>
   </div>
 </section>
 

@@ -15,19 +15,93 @@ document.querySelectorAll("img").forEach(img => {
   if (img.complete && img.naturalWidth === 0) hideUnavailableMedia(img);
 });
 
-document.querySelectorAll("video").forEach(video => {
+const videos = [...document.querySelectorAll("video")];
+function loadVideo(video) {
+  const source = video.querySelector("source[data-src]");
+  if (!source) return;
+  source.src = source.dataset.src;
+  source.removeAttribute("data-src");
+  video.load();
+}
+
+videos.forEach(video => {
   video.addEventListener("error", () => { video.hidden = true; }, { once: true });
   video.addEventListener("loadeddata", () => video.classList.add("is-ready"), { once: true });
-  if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-    video.hidden = true;
-  }
-  window.setTimeout(() => {
-    if (video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) video.hidden = true;
-  }, 2000);
 });
+
+if ("IntersectionObserver" in window) {
+  const videoObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting || entry.intersectionRatio === 0) return;
+      loadVideo(entry.target);
+      videoObserver.unobserve(entry.target);
+    });
+  }, { rootMargin: "0px" });
+  videos.forEach(video => videoObserver.observe(video));
+} else {
+  videos.forEach(loadVideo);
+}
+
+const cursor = document.querySelector(".cursor");
+if (cursor && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  const glow = document.querySelector(".cursor-glow");
+  const label = cursor.querySelector(".cursor-label");
+  let pointerX = 0, pointerY = 0, cursorX = 0, cursorY = 0, glowX = 0, glowY = 0;
+  let cursorFrame = 0;
+  let hasPointer = false;
+
+  function followPointer() {
+    glowX += (pointerX - glowX) * 0.12;
+    glowY += (pointerY - glowY) * 0.12;
+    glow.style.left = `${glowX}px`;
+    glow.style.top = `${glowY}px`;
+
+    if (Math.abs(pointerX - glowX) > 0.5 || Math.abs(pointerY - glowY) > 0.5) {
+      cursorFrame = window.requestAnimationFrame(followPointer);
+    } else {
+      cursorFrame = 0;
+    }
+  }
+
+  window.addEventListener("pointermove", event => {
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!hasPointer) {
+      glowX = pointerX;
+      glowY = pointerY;
+      glow.style.left = `${glowX}px`;
+      glow.style.top = `${glowY}px`;
+      hasPointer = true;
+    }
+    cursor.style.left = `${pointerX}px`;
+    cursor.style.top = `${pointerY}px`;
+    cursor.classList.add("on");
+    glow.classList.add("on");
+    if (!cursorFrame) cursorFrame = window.requestAnimationFrame(followPointer);
+  });
+  document.addEventListener("pointerover", event => {
+    const target = event.target.closest("a, button, img");
+    if (!target) return;
+    const isImage = target.matches("img");
+    cursor.classList.toggle("is-view", isImage);
+    cursor.classList.add("is-active");
+    glow.classList.add("is-active");
+    label.textContent = isImage ? "Lihat" : "";
+  });
+  document.addEventListener("pointerout", event => {
+    const target = event.target.closest("a, button, img");
+    const nextTarget = event.relatedTarget?.closest?.("a, button, img");
+    if (!target || nextTarget) return;
+    cursor.classList.remove("is-active", "is-view");
+    glow.classList.remove("is-active");
+    label.textContent = "";
+  });
+}
 
 if (typeof window.gsap === "undefined" || typeof window.ScrollTrigger === "undefined") {
   document.querySelector(".loader")?.remove();
+  document.querySelectorAll(".stat b").forEach(stat => { stat.textContent = stat.dataset.n; });
+  document.querySelector(".duel")?.classList.add("is-static");
 } else {
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,6 +118,7 @@ document.querySelectorAll(".split").forEach(el => {
 
 /* Loader lalu intro hero */
 function heroIntro() {
+  if (reduce) return;
   const tl = gsap.timeline();
   tl.from(".nav", { y: -60, opacity: 0, duration: 0.8, ease: "power3.out" })
     .fromTo(".title span", { yPercent: 120, rotate: 8, opacity: 0 },
@@ -55,14 +130,18 @@ function heroIntro() {
 
 const counter = { v: 0 };
 const countEl = document.getElementById("count");
-gsap.timeline({ onComplete: () => document.querySelector(".loader")?.remove() })
-  .to(counter, {
-    v: 100, duration: reduce ? 0.3 : 1.8, ease: "power2.inOut",
-    onUpdate: () => countEl.textContent = Math.round(counter.v)
-  })
-  .to(".loader-bar i", { width: "100%", duration: reduce ? 0.3 : 1.8, ease: "power2.inOut" }, 0)
-  .to(".loader", { yPercent: -100, duration: 0.9, ease: "power4.inOut" })
-  .call(heroIntro, null, "-=0.5");
+if (reduce) {
+  document.querySelector(".loader")?.remove();
+} else {
+  gsap.timeline({ onComplete: () => document.querySelector(".loader")?.remove() })
+    .to(counter, {
+      v: 100, duration: 1.8, ease: "power2.inOut",
+      onUpdate: () => { countEl.textContent = Math.round(counter.v); }
+    })
+    .to(".loader-bar i", { width: "100%", duration: 1.8, ease: "power2.inOut" }, 0)
+    .to(".loader", { yPercent: -100, opacity: 0, duration: 0.9, ease: "power4.inOut" })
+    .call(heroIntro, null, "-=0.5");
+}
 
 if (!reduce) {
   /* Progress bar scroll */
@@ -77,6 +156,10 @@ if (!reduce) {
       yPercent: -12, ease: "none",
       scrollTrigger: { trigger: v.parentElement, start: "top bottom", end: "bottom top", scrub: true }
     });
+  });
+  gsap.fromTo(".shinobu-bg", { "--shinobu-parallax": "4%" }, {
+    "--shinobu-parallax": "-4%", ease: "none",
+    scrollTrigger: { trigger: ".shinobu-bg", start: "top bottom", end: "bottom top", scrub: true }
   });
 
   /* Judul AKAZA menghilang saat scroll */
@@ -116,35 +199,68 @@ if (!reduce) {
     marquee(".runing-down", -1);
   });
 
-  /* Duel: scroll horizontal dengan pin */
-  const track = document.querySelector(".duel-track");
-  const scrollDist = () => track.scrollWidth - window.innerWidth;
-  const hScroll = gsap.to(track, {
-    x: () => -scrollDist(), ease: "none",
-    scrollTrigger: {
-      trigger: ".duel", pin: true, scrub: 0.8,
-      start: "top top", end: () => "+=" + scrollDist(),
-      invalidateOnRefresh: true
-    }
+  /* Duel: horizontal di desktop, stacked di layar kecil */
+  const duelMedia = gsap.matchMedia();
+  function animateDuelCards(containerAnimation) {
+    document.querySelectorAll(".card").forEach(card => {
+      const inner = card.querySelector(".c-inner");
+      const st = {
+        trigger: card,
+        start: containerAnimation ? "left 85%" : "top 85%",
+        toggleActions: "play none none reverse"
+      };
+      if (containerAnimation) st.containerAnimation = containerAnimation;
+      gsap.set(inner, { transformPerspective: 900 });
+      gsap.from(inner, { y: 70, opacity: 0, rotationY: -14, duration: 1, ease: "power3.out", scrollTrigger: st });
+      gsap.from(card.querySelectorAll(".c-body > *"), { y: 30, opacity: 0, stagger: 0.1, duration: 0.8, delay: 0.2, scrollTrigger: st });
+      gsap.from(card.querySelectorAll(".bar i"), { scaleX: 0, transformOrigin: "left", duration: 1.2, stagger: 0.15, delay: 0.6, ease: "power3.out", scrollTrigger: st });
+
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        const rx = gsap.quickTo(inner, "rotationY", { duration: 0.5, ease: "power3" });
+        const ry = gsap.quickTo(inner, "rotationX", { duration: 0.5, ease: "power3" });
+        card.addEventListener("mousemove", e => {
+          const r = inner.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+          rx((px - 0.5) * 10); ry(-(py - 0.5) * 10);
+          inner.style.setProperty("--mx", px * 100 + "%");
+          inner.style.setProperty("--my", py * 100 + "%");
+        });
+        card.addEventListener("mouseleave", () => { rx(0); ry(0); });
+      }
+    });
+  }
+
+  duelMedia.add("(min-width: 701px)", () => {
+    const track = document.querySelector(".duel-track");
+    const indicator = document.querySelector(".duel-progress");
+    const fill = document.querySelector(".duel-progress-fill");
+    const dots = [...document.querySelectorAll(".duel-dots li")];
+    const scrollDist = () => Math.max(track.scrollWidth - window.innerWidth, 1);
+    const hScroll = gsap.to(track, {
+      x: () => -scrollDist(), ease: "none",
+      scrollTrigger: {
+        trigger: ".duel", pin: true, scrub: 0.8,
+        start: "top top", end: () => "+=" + scrollDist(),
+        invalidateOnRefresh: true,
+        onUpdate: self => {
+          const current = Math.round(self.progress * (dots.length - 1));
+          fill.style.transform = `translateY(-50%) scaleX(${self.progress})`;
+          indicator.setAttribute("aria-valuenow", current);
+          indicator.setAttribute("aria-valuetext", `Panel ${current + 1} dari ${dots.length}`);
+          dots.forEach((dot, index) => dot.classList.toggle("is-current", index === current));
+        }
+      }
+    });
+    animateDuelCards(hScroll);
   });
 
-  document.querySelectorAll(".card").forEach(card => {
-    const inner = card.querySelector(".c-inner");
-    const st = { trigger: card, containerAnimation: hScroll, start: "left 85%", toggleActions: "play none none reverse" };
-    gsap.set(inner, { transformPerspective: 900 });
-    gsap.from(inner, { y: 70, opacity: 0, rotationY: -14, duration: 1, ease: "power3.out", scrollTrigger: st });
-    gsap.from(card.querySelectorAll(".c-body > *"), { y: 30, opacity: 0, stagger: 0.1, duration: 0.8, delay: 0.2, scrollTrigger: st });
-    gsap.from(card.querySelectorAll(".bar i"), { scaleX: 0, transformOrigin: "left", duration: 1.2, stagger: 0.15, delay: 0.6, ease: "power3.out", scrollTrigger: st });
-    const rx = gsap.quickTo(inner, "rotationY", { duration: 0.5, ease: "power3" });
-    const ry = gsap.quickTo(inner, "rotationX", { duration: 0.5, ease: "power3" });
-    card.addEventListener("mousemove", e => {
-      const r = inner.getBoundingClientRect();
-      const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
-      rx((px - 0.5) * 10); ry(-(py - 0.5) * 10);
-      inner.style.setProperty("--mx", px * 100 + "%");
-      inner.style.setProperty("--my", py * 100 + "%");
+  duelMedia.add("(max-width: 700px)", () => {
+    document.querySelector(".duel-hint").textContent = "Scroll untuk melihat kartu satu per satu.";
+    gsap.from(".panel.intro > *", {
+      y: 36, opacity: 0, stagger: 0.12, duration: 0.8, ease: "power3.out",
+      scrollTrigger: { trigger: ".panel.intro", start: "top 80%", toggleActions: "play none none reverse" }
     });
-    card.addEventListener("mouseleave", () => { rx(0); ry(0); });
+    animateDuelCards(null);
   });
 
   /* Hitung angka statistik */
@@ -156,6 +272,10 @@ if (!reduce) {
       onUpdate: () => b.textContent = Math.round(o.v),
       scrollTrigger: { trigger: b, start: "top 85%", once: true }
     });
+  });
+  gsap.from(".stat", {
+    y: 36, opacity: 0, stagger: 0.14, duration: 0.8, ease: "power3.out",
+    scrollTrigger: { trigger: ".stats", start: "top 78%", toggleActions: "play none none reverse" }
   });
 
 
@@ -185,7 +305,7 @@ if (!reduce) {
   });
   gsap.utils.toArray(".tl-item").forEach(it => {
     gsap.from(it, {
-      x: 60, opacity: 0, duration: 0.9, ease: "power3.out",
+      y: 60, opacity: 0, duration: 0.9, ease: "power3.out",
       scrollTrigger: { trigger: it, start: "top 85%", toggleActions: "play none none reverse" }
     });
   });
@@ -211,6 +331,9 @@ if (!reduce) {
     { yPercent: 0, rotate: 0, opacity: 1, duration: 1.2, stagger: 0.12, ease: "expo.out", scrollTrigger: shTrig });
   gsap.fromTo(".shinobu-content .char-eyebrow", { x: -30, opacity: 0 },
     { x: 0, opacity: 1, duration: 0.8, delay: 0.3, scrollTrigger: shTrig });
+  gsap.from(".shinobu-content .shinobu-bio, .shinobu-content .shinobu-stat", {
+    y: 24, opacity: 0, stagger: 0.1, duration: 0.7, ease: "power3.out", scrollTrigger: shTrig
+  });
   gsap.to(".shinobu-content", {
     yPercent: -60, opacity: 0, ease: "none",
     scrollTrigger: { trigger: ".shinobu-bg", start: "center top", end: "bottom top", scrub: true }
@@ -245,6 +368,9 @@ if (!reduce) {
     gsap.to(btn, { x: (e.clientX - r.left - r.width / 2) * 0.35, y: (e.clientY - r.top - r.height / 2) * 0.35, duration: 0.3 });
   });
   btn.addEventListener("mouseleave", () => gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.4)" }));
+} else {
+  document.querySelectorAll(".stat b").forEach(stat => { stat.textContent = stat.dataset.n; });
+  document.querySelector(".duel").classList.add("is-static");
 }
 
 /* Navigasi & tombol atas pakai scroll GSAP-friendly */
