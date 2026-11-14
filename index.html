@@ -22,6 +22,7 @@
 </head>
 <body>
 
+<a class="skip-link" href="#akaza">Langsung ke konten</a>
 <div class="cursor-glow" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true">
   <span class="cursor-ring"></span>
@@ -47,6 +48,8 @@
   <a href="#giyu">Giyu</a>
   <a href="#end">Akhir</a>
 </nav>
+
+<main>
 
 <!-- HERO AKAZA -->
 <section class="akaza-bg" id="akaza">
@@ -164,7 +167,10 @@
   <div class="duel-progress" role="progressbar" aria-label="Progres panel duel" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-valuetext="Panel 1 dari 5">
     <span class="duel-progress-fill"></span>
     <ol class="duel-dots" aria-hidden="true"><li class="is-current"></li><li></li><li></li><li></li><li></li></ol>
+    <span class="duel-count" aria-hidden="true">1 / 5</span>
   </div>
+  <button class="duel-btn" id="duelPrev" type="button" aria-label="Panel sebelumnya">&#8249;</button>
+  <button class="duel-btn" id="duelNext" type="button" aria-label="Panel berikutnya">&#8250;</button>
 </section>
 
 <!-- KUTIPAN -->
@@ -202,7 +208,7 @@
 <!-- SHINOBU -->
 <section class="char-bg shinobu-bg" id="shinobu">
   <video autoplay loop muted playsinline disablepictureinpicture preload="none" poster="img/shinobu1.webp" class="parallax-video shinobu-video" aria-hidden="true">
-    <source data-src="img/shinobu 7.mp4" type="video/mp4">
+    <source data-src="img/shinobu7.mp4" type="video/mp4">
     <source data-src="img/shinobu7.webm" type="video/webm">
   </video>
   <div class="shade"></div>
@@ -277,9 +283,16 @@
     <i class="ember e1"></i><i class="ember e2"></i><i class="ember e3"></i><i class="ember e4"></i><i class="ember e5"></i><i class="ember e6"></i><i class="ember e7"></i><i class="ember e8"></i>
   </div>
   <h2 class="big"><span>Bulan</span> <span>atau</span> <span>Api?</span></h2>
+  <p class="end-ask">Pilih jalurmu:</p>
+  <div class="end-cta">
+    <a class="btn cta-moon" href="#akaza">Pilih Bulan</a>
+    <a class="btn cta-fire" href="#tanjiro">Pilih Api</a>
+  </div>
   <p class="end-by">Braja Design</p>
   <button class="btn" id="btnTop">Kembali ke atas</button>
 </section>
+
+</main>
 
 <footer class="site-foot">
   <div class="sf-grid">

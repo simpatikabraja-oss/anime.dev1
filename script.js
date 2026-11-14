@@ -26,8 +26,23 @@ function loadVideo(video) {
   video.load();
 }
 
+/* Bila semua source video gagal: poster tetap tampil (area tidak boleh kosong).
+   Video tanpa poster disembunyikan dan parentnya memakai fallback. */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 videos.forEach(video => {
-  video.addEventListener("error", () => { video.hidden = true; }, { once: true });
+  const sources = [...video.querySelectorAll("source")];
+  const failFallback = () => {
+    if (!video.hasAttribute("poster")) hideUnavailableMedia(video);
+  };
+  if (sources.length) {
+    let failed = 0;
+    sources.forEach(source => source.addEventListener("error", () => {
+      failed++;
+      if (failed >= sources.length) failFallback();
+    }, { once: true }));
+  } else {
+    video.addEventListener("error", failFallback, { once: true });
+  }
   video.addEventListener("loadeddata", () => video.classList.add("is-ready"), { once: true });
 });
 
@@ -35,12 +50,13 @@ if ("IntersectionObserver" in window) {
   const videoObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting || entry.intersectionRatio === 0) return;
-      loadVideo(entry.target);
+      /* Reduced motion: video tidak dimuat sama sekali, poster statis yang tampil */
+      if (!reduceMotion) loadVideo(entry.target);
       videoObserver.unobserve(entry.target);
     });
   }, { rootMargin: "0px" });
   videos.forEach(video => videoObserver.observe(video));
-} else {
+} else if (!reduceMotion) {
   videos.forEach(loadVideo);
 }
 
@@ -114,6 +130,38 @@ gsap.registerPlugin(ScrollTrigger);
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* Nav: tandai link section yang sedang terlihat */
+const navLinks = [...document.querySelectorAll(".nav a")];
+["#akaza", "#tanjiro", "#duel", "#shinobu", "#giyu", "#end"].forEach(id => {
+  const link = navLinks.find(a => a.getAttribute("href") === id);
+  const section = document.querySelector(id);
+  if (!link || !section) return;
+  ScrollTrigger.create({
+    trigger: section,
+    start: "top 55%",
+    end: "bottom 55%",
+    onToggle: self => link.classList.toggle("is-current", self.isActive)
+  });
+});
+
+/* Tombol prev/next panel duel: lompat ke posisi panel */
+function duelStep(dir) {
+  const track = document.querySelector(".duel-track");
+  const dotsCount = document.querySelectorAll(".duel-dots li").length;
+  if (!track || dotsCount < 2) return;
+  const hTween = gsap.getTweensOf(track).find(t => t.scrollTrigger);
+  if (!hTween) return;
+  const st = hTween.scrollTrigger;
+  const current = Math.round(st.progress * (dotsCount - 1));
+  const target = Math.min(dotsCount - 1, Math.max(0, current + dir));
+  window.scrollTo({
+    top: st.start + (st.end - st.start) * (target / (dotsCount - 1)),
+    behavior: "smooth"
+  });
+}
+document.getElementById("duelPrev")?.addEventListener("click", () => duelStep(-1));
+document.getElementById("duelNext")?.addEventListener("click", () => duelStep(1));
+
 /* Pecah teks jadi huruf (untuk .split) */
 document.querySelectorAll(".split").forEach(el => {
   const text = el.textContent;
@@ -142,12 +190,12 @@ if (reduce) {
 } else {
   gsap.timeline({ onComplete: () => document.querySelector(".loader")?.remove() })
     .to(counter, {
-      v: 100, duration: 1.8, ease: "power2.inOut",
+      v: 100, duration: 1.1, ease: "power2.out",
       onUpdate: () => { countEl.textContent = Math.round(counter.v); }
     })
-    .to(".loader-bar i", { width: "100%", duration: 1.8, ease: "power2.inOut" }, 0)
-    .to(".loader", { yPercent: -100, opacity: 0, duration: 0.9, ease: "power4.inOut" })
-    .call(heroIntro, null, "-=0.5");
+    .to(".loader-bar i", { width: "100%", duration: 1.1, ease: "power2.out" }, 0)
+    .to(".loader", { yPercent: -100, opacity: 0, duration: 0.7, ease: "power4.inOut" })
+    .call(heroIntro, null, "-=0.35");
 }
 
 if (!reduce) {
@@ -242,6 +290,7 @@ if (!reduce) {
     const indicator = document.querySelector(".duel-progress");
     const fill = document.querySelector(".duel-progress-fill");
     const dots = [...document.querySelectorAll(".duel-dots li")];
+    const countTxt = document.querySelector(".duel-count");
     const scrollDist = () => Math.max(track.scrollWidth - window.innerWidth, 1);
     const hScroll = gsap.to(track, {
       x: () => -scrollDist(), ease: "none",
@@ -255,6 +304,7 @@ if (!reduce) {
           indicator.setAttribute("aria-valuenow", current);
           indicator.setAttribute("aria-valuetext", `Panel ${current + 1} dari ${dots.length}`);
           dots.forEach((dot, index) => dot.classList.toggle("is-current", index === current));
+          if (countTxt) countTxt.textContent = `${current + 1} / ${dots.length}`;
         }
       }
     });
@@ -380,12 +430,14 @@ if (!reduce) {
   document.querySelector(".duel").classList.add("is-static");
 }
 
-/* Navigasi & tombol atas pakai scroll GSAP-friendly */
-document.querySelectorAll(".nav a").forEach(a => {
+/* Navigasi, CTA jalur, & tombol atas pakai scroll GSAP-friendly.
+   Offset scroll-margin-top tiap section ikut dihitung agar nav tidak menutupi konten. */
+document.querySelectorAll(".nav a, .end-cta a").forEach(a => {
   a.addEventListener("click", e => {
     e.preventDefault();
     const t = document.querySelector(a.getAttribute("href"));
-    window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY, behavior: "smooth" });
+    const offset = parseFloat(getComputedStyle(t).scrollMarginTop) || 0;
+    window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
   });
 });
 document.getElementById("btnTop").addEventListener("click", () => {

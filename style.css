@@ -123,12 +123,16 @@ img {
 .nav a:hover {
   background: rgba(255, 255, 255, 0.18);
 }
+.nav a.is-current {
+  background: rgba(255, 255, 255, 0.22);
+}
 
 /* SECTION UMUM */
 .akaza-bg,
 .tanjiro-bg {
   width: 100%;
   height: 100vh;
+  height: 100svh;
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -213,7 +217,8 @@ img {
   letter-spacing: calc(-2 * var(--u));
 }
 .tanjiro-content p {
-  line-height: 1.6;
+  font-size: max(16px, calc(15 * var(--u)));
+  line-height: 1.65;
   max-width: 60ch;
 }
 
@@ -626,8 +631,9 @@ img {
   margin-bottom: calc(10 * var(--u));
 }
 .tl-item p {
-  line-height: 1.6;
-  opacity: 0.75;
+  font-size: max(16px, calc(14 * var(--u)));
+  line-height: 1.65;
+  opacity: 0.8;
 }
 
 /* FOOTER */
@@ -1108,31 +1114,32 @@ img {
   .nav {
     width: calc(100vw - 24px);
     max-width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-    overflow-x: hidden;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: calc(4 * var(--u));
-  }
-  .nav::-webkit-scrollbar {
-    display: none;
+    padding: calc(5 * var(--u));
+    top: calc(10 * var(--u));
   }
   .nav a {
-    flex: 0 0 auto;
-    font-size: calc(12 * var(--u));
-    padding: calc(6 * var(--u)) calc(12 * var(--u));
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    padding: 0 calc(4 * var(--u));
+    white-space: nowrap;
   }
 }
 
-/* HP sempit ≤480px (iPhone SE dan sejenis): font lebih kecil, link lebih rapat,
-   biarkan wrap ke 2 baris supaya semua link selalu terlihat tanpa digeser/di-scroll. */
+/* HP sempit ≤480px (iPhone SE dan sejenis): label tetap utuh,
+   target sentuh tetap 44px, grid 3 kolom muat tanpa scroll. */
 @media (max-width: 480px) {
   .nav {
     width: calc(100vw - 16px);
     gap: calc(3 * var(--u));
   }
   .nav a {
-    font-size: calc(10 * var(--u));
-    padding: calc(5 * var(--u)) calc(10 * var(--u));
+    font-size: 12px;
   }
 }
 
@@ -1433,6 +1440,9 @@ img {
 .card .c-body p {
   max-width: 38ch;
   margin-bottom: calc(20 * var(--u));
+  font-size: max(16px, calc(14 * var(--u)));
+  line-height: 1.65;
+  opacity: 0.92;
 }
 .c-stats {
   display: flex;
@@ -1443,9 +1453,9 @@ img {
 .bar label {
   display: flex;
   justify-content: space-between;
-  font-size: calc(12 * var(--u));
+  font-size: max(12px, calc(12 * var(--u)));
   letter-spacing: 0.06em;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-bottom: calc(6 * var(--u));
 }
 .bar span {
@@ -1464,8 +1474,8 @@ img {
 .c-note {
   display: block;
   margin-top: calc(14 * var(--u));
-  font-size: calc(11 * var(--u));
-  opacity: 0.4;
+  font-size: max(12px, calc(11 * var(--u)));
+  opacity: 0.6;
 }
 .akaza-card::before,
 .tanjiro-card::before {
@@ -1668,9 +1678,10 @@ img {
   margin-bottom: calc(24 * var(--u));
 }
 .giyu-copy > p:not(.giyu-eyebrow) {
+  font-size: max(16px, calc(15 * var(--u)));
   line-height: 1.7;
   max-width: 44ch;
-  opacity: 0.85;
+  opacity: 0.92;
 }
 .chips {
   display: flex;
@@ -1835,8 +1846,8 @@ img {
 .shinobu-bio {
   max-width: 60ch;
   margin: calc(14 * var(--u)) 0 0 calc(10 * var(--u));
-  font-size: calc(15 * var(--u));
-  line-height: 1.6;
+  font-size: max(16px, calc(15 * var(--u)));
+  line-height: 1.65;
   text-shadow: 0 calc(1 * var(--u)) calc(8 * var(--u)) rgba(0, 0, 0, 0.8);
 }
 .shinobu-stats {
@@ -2079,6 +2090,9 @@ img {
   .duel-progress {
     display: none;
   }
+  .duel-btn {
+    display: none;
+  }
 }
 
 .duel.is-static {
@@ -2114,6 +2128,9 @@ img {
   height: min(42vh, 360px);
 }
 .duel.is-static .duel-progress {
+  display: none;
+}
+.duel.is-static .duel-btn {
   display: none;
 }
 
@@ -2408,6 +2425,8 @@ img {
   right: clamp(18px, 4vw, 56px);
 }
 .end > .big,
+.end > .end-ask,
+.end > .end-cta,
 .end > .end-by,
 .end > .btn {
   position: relative;
@@ -2544,4 +2563,129 @@ img {
   0% { transform: translateY(0) translateX(0); opacity: 0; }
   8% { opacity: 0.95; }
   100% { transform: translateY(-60vh) translateX(calc(14 * var(--u))); opacity: 0; }
+}
+
+/* ===== UPGRADE: aksesibilitas & fokus ===== */
+/* Skip link: muncul saat fokus keyboard */
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--blood);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 16px));
+  transition: transform 0.2s ease;
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--fire);
+  outline-offset: 3px;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--fire);
+  outline-offset: 3px;
+}
+#akaza, #tanjiro, #duel, #shinobu, #giyu, #end {
+  scroll-margin-top: 64px;
+}
+@media (max-width: 700px) {
+  #akaza, #tanjiro, #duel, #shinobu, #giyu, #end {
+    scroll-margin-top: 124px;
+  }
+}
+
+/* Kontrol panel duel: prev/next + indikator "1 / 5" (desktop saja) */
+.duel-btn {
+  position: absolute;
+  bottom: calc(28 * var(--u) - 15px);
+  z-index: 6;
+  width: 44px;
+  height: 44px;
+  font: inherit;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--paper);
+  background: rgba(7, 7, 12, 0.55);
+  border: 1px solid rgba(243, 238, 232, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s;
+}
+.duel-btn:hover {
+  background: rgba(243, 238, 232, 0.22);
+}
+#duelPrev { left: calc(50% - min(calc(300 * var(--u)), 52vw) / 2 - 58px); }
+#duelNext { right: calc(50% - min(calc(300 * var(--u)), 52vw) / 2 - 58px); }
+.duel-count {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: rgba(243, 238, 232, 0.9);
+}
+
+/* CTA pilihan jalur di penutup */
+.end-ask {
+  font-size: max(16px, calc(14 * var(--u)));
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+.end-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(14 * var(--u));
+}
+.end-cta a {
+  text-decoration: none;
+  min-width: calc(170 * var(--u));
+  text-align: center;
+}
+.cta-moon {
+  border-color: var(--moon);
+  color: var(--moon);
+}
+.cta-fire {
+  border-color: var(--fire);
+  color: var(--fire);
+}
+.cta-moon:hover,
+.cta-moon:focus-visible {
+  background: var(--moon);
+  border-color: var(--moon);
+  color: var(--ink);
+}
+.cta-fire:hover,
+.cta-fire:focus-visible {
+  background: var(--fire);
+  border-color: var(--fire);
+  color: var(--ink);
+}
+
+/* Laptop pendek (1024×768 dan sejenis): judul hero tetap utuh di viewport */
+@media (min-width: 701px) and (max-height: 780px) {
+  .title span {
+    font-size: clamp(calc(52 * var(--u)), 15vh, calc(140 * var(--u)));
+  }
+  .akaza-content {
+    bottom: calc(14 * var(--u));
+  }
+  .scroll-hint {
+    bottom: calc(18 * var(--u));
+  }
 }
