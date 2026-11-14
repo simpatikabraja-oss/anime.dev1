@@ -715,9 +715,16 @@ img {
 }
 .tl-item.tl-klimaks .tl-text h3 {
   color: var(--paper);
+  font-size: clamp(calc(30 * var(--u)), 4vw, calc(52 * var(--u)));
+  letter-spacing: calc(-1 * var(--u));
+  text-shadow: 0 0 calc(20 * var(--u)) rgba(224, 36, 60, 0.6);
 }
 .tl-item.tl-klimaks .tl-text p {
-  opacity: 0.95;
+  opacity: 1;
+  color: var(--paper);
+  font-size: clamp(calc(15 * var(--u)), 2.2vw, calc(20 * var(--u)));
+  font-weight: 600;
+  text-shadow: 0 0 calc(12 * var(--u)) rgba(0, 0, 0, 0.8);
 }
 .tl-text {
   max-width: 36ch;
@@ -1101,15 +1108,31 @@ img {
   .nav {
     width: calc(100vw - 24px);
     max-width: 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    scrollbar-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+    gap: calc(4 * var(--u));
   }
   .nav::-webkit-scrollbar {
     display: none;
   }
   .nav a {
     flex: 0 0 auto;
+    font-size: calc(12 * var(--u));
+    padding: calc(6 * var(--u)) calc(12 * var(--u));
+  }
+}
+
+/* HP sempit ≤480px (iPhone SE dan sejenis): font lebih kecil, link lebih rapat,
+   biarkan wrap ke 2 baris supaya semua link selalu terlihat tanpa digeser/di-scroll. */
+@media (max-width: 480px) {
+  .nav {
+    width: calc(100vw - 16px);
+    gap: calc(3 * var(--u));
+  }
+  .nav a {
+    font-size: calc(10 * var(--u));
+    padding: calc(5 * var(--u)) calc(10 * var(--u));
   }
 }
 
@@ -1876,8 +1899,8 @@ img {
 }
 
 .cursor {
-  width: 24px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background: transparent;
   box-shadow: none;
   transform: none;
@@ -1888,18 +1911,29 @@ img {
   top: 0;
   left: 0;
   z-index: 2;
-  width: 24px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   overflow: visible;
-  fill: #ff922e;
-  stroke: #fff0c2;
-  stroke-width: 1.4px;
-  stroke-linejoin: round;
   filter:
     drop-shadow(0 0 3px #ffb347)
     drop-shadow(0 0 9px rgba(255, 104, 22, 0.9));
   animation: cursor-flare 0.75s ease-in-out infinite alternate;
   transition: filter 0.2s ease;
+}
+/* Pedang api: bilah oranye panas, hilt merah */
+.sw-blade { fill: #ffb054; }
+.sw-guard,
+.sw-handle,
+.sw-pommel { fill: #e0243c; }
+/* Pedang bulan: bilah biru pucat, hilt biru-violet */
+.cursor.is-moon .sw-blade { fill: #ccd6ff; }
+.cursor.is-moon .sw-guard,
+.cursor.is-moon .sw-handle,
+.cursor.is-moon .sw-pommel { fill: #6f7bff; }
+.cursor.is-moon .cursor-pointer {
+  filter:
+    drop-shadow(0 0 4px rgba(150, 160, 255, 0.9))
+    drop-shadow(0 0 10px rgba(111, 123, 255, 0.95));
 }
 .cursor-ring {
   position: absolute;
@@ -1942,8 +1976,8 @@ img {
 }
 .cursor-label {
   position: absolute;
-  top: 42px;
-  left: 38px;
+  top: 44px;
+  left: 42px;
   z-index: 3;
   white-space: nowrap;
   color: #fff;
@@ -1960,6 +1994,11 @@ img {
   filter:
     drop-shadow(0 0 5px #ffd17a)
     drop-shadow(0 0 13px rgba(255, 104, 22, 1));
+}
+.cursor.is-moon.is-active .cursor-pointer {
+  filter:
+    drop-shadow(0 0 6px #c3caff)
+    drop-shadow(0 0 14px rgba(111, 123, 255, 1));
 }
 .cursor.is-active .cursor-ring {
   width: 30px;
@@ -2387,8 +2426,13 @@ img {
   to { transform: scale(1.14) translate3d(1%, -1.5%, 0); }
 }
 @keyframes end-tanjiro-drift {
-  from { transform: scale(1.05) translate3d(0, -0.5%, 0); }
-  to { transform: scale(1.13) translate3d(0, 1%, 0); }
+  from { transform: scale(1.05) translateX(-5%); }
+  to { transform: scale(1.13) translateX(5%); }
+}
+/* Versi HP: zoom lebih kecil supaya lebih banyak bagian video terlihat */
+@keyframes end-tanjiro-drift-hp {
+  from { transform: scale(1.06) translateX(-2.5%); }
+  to { transform: scale(1.11) translateX(2.5%); }
 }
 @media (max-width: 700px) {
   .end {
@@ -2398,7 +2442,7 @@ img {
   }
   .end-scenes {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1.25fr 0.75fr;
   }
   .end-scenes::after {
     background:
@@ -2407,6 +2451,12 @@ img {
   }
   .end-scene-akaza img {
     object-position: center 28%;
+  }
+  /* Video Tanjiro di HP: baris lebih pendek + zoom ringan,
+     supaya tidak cuma pedangnya yang terlihat */
+  .end-video {
+    object-position: center 40%;
+    animation: end-tanjiro-drift-hp 18s ease-in-out infinite alternate;
   }
   .end-scene span {
     display: none;
@@ -2431,13 +2481,15 @@ img {
   .shinobu-shot img {
     transition: none;
   }
-  .aura-moon, .aura-fire {
+  .aura-moon, .ember, .star {
     animation: none;
-    opacity: 0.35;
+  }
+  .ember, .star {
+    opacity: 0;
   }
 }
 
-/* ===== AKHIR: aura api & bulan ===== */
+/* ===== AKHIR: bulan & api yang jelas terlihat ===== */
 .end-aura {
   position: absolute;
   inset: 0;
@@ -2445,36 +2497,71 @@ img {
   pointer-events: none;
   overflow: hidden;
 }
+/* Bulan: piringan solid + halo, di sisi kiri atas (sisi Akaza) */
 .aura-moon {
   position: absolute;
-  top: 18%;
-  left: 50%;
-  width: clamp(calc(300 * var(--u)), 52vw, calc(720 * var(--u)));
-  height: clamp(calc(300 * var(--u)), 52vw, calc(720 * var(--u)));
+  top: 15%;
+  left: 20%;
+  width: clamp(calc(120 * var(--u)), 18vw, calc(240 * var(--u)));
+  height: clamp(calc(120 * var(--u)), 18vw, calc(240 * var(--u)));
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(111, 123, 255, 0.16), transparent 70%);
-  animation: aura-pulse 7s ease-in-out infinite;
+  background:
+    radial-gradient(circle at 34% 32%, #f2f4ff 0%, #c3caff 38%, #8d99ff 62%, rgba(111, 123, 255, 0.35) 82%, rgba(111, 123, 255, 0) 88%);
+  box-shadow:
+    0 0 calc(40 * var(--u)) rgba(111, 123, 255, 0.85),
+    0 0 calc(120 * var(--u)) rgba(111, 123, 255, 0.45);
+  animation: aura-pulse 6s ease-in-out infinite;
 }
-.aura-fire {
+/* Api: bara yang naik dari bawah */
+.ember {
   position: absolute;
   bottom: 8%;
-  left: 50%;
-  width: clamp(calc(140 * var(--u)), 22vw, calc(360 * var(--u)));
-  height: clamp(calc(240 * var(--u)), 28vw, calc(520 * var(--u)));
-  transform: translate(-50%, 0);
-  border-radius: 50% 50% 42% 42% / 60% 60% 40% 40%;
-  background:
-    radial-gradient(circle at 50% 85%, rgba(255, 138, 43, 0.32), transparent 55%),
-    linear-gradient(to top, rgba(224, 36, 60, 0.22), transparent);
-  filter: blur(calc(5 * var(--u)));
-  animation: fire-rise 5s ease-in-out infinite alternate;
+  width: calc(5 * var(--u));
+  height: calc(5 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe6a8, #ff8a2b 70%);
+  box-shadow: 0 0 calc(8 * var(--u)) rgba(255, 138, 43, 0.9);
+  opacity: 0;
+  animation: ember-rise 5s linear infinite;
+}
+.ember.e1 { left: 30%; }
+.ember.e2 { left: 42%; width: calc(3 * var(--u)); height: calc(3 * var(--u)); animation-delay: 0.9s; }
+.ember.e3 { left: 55%; animation-delay: 1.8s; }
+.ember.e4 { left: 63%; width: calc(4 * var(--u)); height: calc(4 * var(--u)); animation-delay: 2.6s; }
+.ember.e5 { left: 37%; width: calc(4 * var(--u)); height: calc(4 * var(--u)); animation-delay: 3.4s; }
+.ember.e6 { left: 68%; width: calc(3 * var(--u)); height: calc(3 * var(--u)); animation-delay: 4.2s; }
+.ember.e7 { left: 47%; width: calc(6 * var(--u)); height: calc(6 * var(--u)); animation-delay: 1.3s; }
+.ember.e8 { left: 58%; width: calc(4 * var(--u)); height: calc(4 * var(--u)); animation-delay: 3.9s; }
+/* Bintang jatuh: garis cahaya putih-biru meluncur diagonal di langit bulan */
+.star {
+  position: absolute;
+  width: clamp(calc(60 * var(--u)), 9vw, calc(130 * var(--u)));
+  height: calc(2 * var(--u));
+  border-radius: calc(999 * var(--u));
+  background: linear-gradient(90deg, #ffffff 0%, #cdd6ff 28%, rgba(140, 150, 255, 0) 100%);
+  filter: drop-shadow(0 0 calc(6 * var(--u)) rgba(150, 160, 255, 0.9));
+  opacity: 0;
+  transform: rotate(-32deg);
+  animation: star-fall 7s linear infinite;
+}
+.star.s1 { top: 6%; left: 8%; animation-delay: 0s; animation-duration: 6.5s; }
+.star.s2 { top: 2%; left: 55%; animation-delay: 2.4s; animation-duration: 7.5s; }
+.star.s3 { top: 12%; left: 76%; animation-delay: 4.6s; animation-duration: 6.2s; }
+.star.s4 { top: 0%; left: 30%; animation-delay: 6.2s; animation-duration: 8.4s; }
+.star.s5 { top: 18%; left: 90%; animation-delay: 1.3s; animation-duration: 7s; }
+@keyframes star-fall {
+  0% { transform: translate3d(0, 0, 0) rotate(-32deg); opacity: 0; }
+  6% { opacity: 1; }
+  34% { opacity: 1; }
+  46%, 100% { transform: translate3d(-55vw, 52vh, 0) rotate(-32deg); opacity: 0; }
 }
 @keyframes aura-pulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.55; }
-  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 0.85; }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
 }
-@keyframes fire-rise {
-  from { transform: translate(-50%, 6%) scale(0.9); opacity: 0.5; }
-  to { transform: translate(-50%, -7%) scale(1.05); opacity: 0.8; }
+@keyframes ember-rise {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  8% { opacity: 0.95; }
+  100% { transform: translateY(-60vh) translateX(calc(14 * var(--u))); opacity: 0; }
 }

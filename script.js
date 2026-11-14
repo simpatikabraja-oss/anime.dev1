@@ -77,6 +77,11 @@ if (cursor && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     }
     cursor.style.left = `${pointerX}px`;
     cursor.style.top = `${pointerY}px`;
+    /* Pedang bulan di area Akaza, pedang api di area lain (Tanjiro dll.) */
+    cursor.classList.toggle(
+      "is-moon",
+      Boolean(event.target.closest?.(".akaza-bg, .akaza-card, .end-scene-akaza"))
+    );
     cursor.classList.add("on");
     glow.classList.add("on");
     if (!cursorFrame) cursorFrame = window.requestAnimationFrame(followPointer);
