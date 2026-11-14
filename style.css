@@ -702,6 +702,23 @@ img {
 .tl-item:nth-of-type(3) figure {
   box-shadow: 0 0 calc(60 * var(--u)) rgba(111, 123, 255, 0.4);
 }
+
+/* Klimaks: Kastil Tak Terbatas — tensi naik sebelum "Bulan atau Api?" */
+.tl-item.tl-klimaks {
+  --tint: rgba(224, 36, 60, 0.55);
+}
+.tl-item.tl-klimaks figure {
+  flex: 0 0 min(calc(620 * var(--u)), 54%);
+  box-shadow: 0 0 calc(85 * var(--u)) rgba(224, 36, 60, 0.55);
+  transform: scale(1.04);
+  z-index: 3;
+}
+.tl-item.tl-klimaks .tl-text h3 {
+  color: var(--paper);
+}
+.tl-item.tl-klimaks .tl-text p {
+  opacity: 0.95;
+}
 .tl-text {
   max-width: 36ch;
 }
@@ -2414,4 +2431,50 @@ img {
   .shinobu-shot img {
     transition: none;
   }
+  .aura-moon, .aura-fire {
+    animation: none;
+    opacity: 0.35;
+  }
+}
+
+/* ===== AKHIR: aura api & bulan ===== */
+.end-aura {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.aura-moon {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  width: clamp(calc(300 * var(--u)), 52vw, calc(720 * var(--u)));
+  height: clamp(calc(300 * var(--u)), 52vw, calc(720 * var(--u)));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(111, 123, 255, 0.16), transparent 70%);
+  animation: aura-pulse 7s ease-in-out infinite;
+}
+.aura-fire {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  width: clamp(calc(140 * var(--u)), 22vw, calc(360 * var(--u)));
+  height: clamp(calc(240 * var(--u)), 28vw, calc(520 * var(--u)));
+  transform: translate(-50%, 0);
+  border-radius: 50% 50% 42% 42% / 60% 60% 40% 40%;
+  background:
+    radial-gradient(circle at 50% 85%, rgba(255, 138, 43, 0.32), transparent 55%),
+    linear-gradient(to top, rgba(224, 36, 60, 0.22), transparent);
+  filter: blur(calc(5 * var(--u)));
+  animation: fire-rise 5s ease-in-out infinite alternate;
+}
+@keyframes aura-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.55; }
+  50% { transform: translate(-50%, -50%) scale(1.12); opacity: 0.85; }
+}
+@keyframes fire-rise {
+  from { transform: translate(-50%, 6%) scale(0.9); opacity: 0.5; }
+  to { transform: translate(-50%, -7%) scale(1.05); opacity: 0.8; }
 }
